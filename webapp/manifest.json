@@ -1,0 +1,152 @@
+{
+  "_version": "1.59.0",
+  "sap.app": {
+    "id": "zcor001",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.14.1",
+      "toolsId": "29c62ad3-80bc-4a41-88d8-853f23d1b582"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata4/sap/zco_zcor001_srv/srvd/sap/zco_ui_zcor001/0001/",
+        "type": "OData",
+        "settings": {
+          "annotations": [
+            "annotation"
+          ],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "4.0"
+        }
+      },
+      "annotation": {
+        "type": "ODataAnnotation",
+        "uri": "annotations/annotation.xml",
+        "settings": {
+          "localUri": "annotations/annotation.xml"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.148.8",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.ushell": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "zcor001.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "ManagementReportComparisionList",
+          "target": "ManagementReportComparisionList"
+        },
+        {
+          "pattern": "ManagementReportComparision({key}):?query:",
+          "name": "ManagementReportComparisionObjectPage",
+          "target": "ManagementReportComparisionObjectPage"
+        }
+      ],
+      "targets": {
+        "ManagementReportComparisionList": {
+          "type": "Component",
+          "id": "ManagementReportComparisionList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/ManagementReportComparision",
+              "variantManagement": "Page",
+              "navigation": {
+                "ManagementReportComparision": {
+                  "detail": {
+                    "route": "ManagementReportComparisionObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ManagementReportComparisionObjectPage": {
+          "type": "Component",
+          "id": "ManagementReportComparisionObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/ManagementReportComparision"
+            }
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  }
+}

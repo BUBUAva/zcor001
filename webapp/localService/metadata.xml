@@ -1,0 +1,1035 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="SAP__aggregation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="SAP__analytics"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AUTHORIZATION',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Authorization.V1" Alias="SAP__authorization"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="SAP__capabilities"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="SAP__communication"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_HIERARCHY',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Hierarchy.v1" Alias="SAP__hierarchy"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_HTML5',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.HTML5.v1" Alias="SAP__HTML5"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Measures.V1" Alias="SAP__measures"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ODM',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.ODM.v1" Alias="SAP__ODM"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PDF',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.PDF.v1" Alias="SAP__PDF"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="SAP__personalData"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_SESSION',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Session.v1" Alias="SAP__session"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_SUPPORT',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Support.v1" Alias="SAP__support"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="SAP__UI"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Validation.V1" Alias="SAP__validation"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="com.sap.gateway.srvd.zco_ui_zcor001.v0001" Alias="SAP__self">
+            <Annotation Term="SAP__core.SchemaVersion" String="1.0.0"/>
+            <EntityType Name="ManagementReportComparisionType">
+                <Key>
+                    <PropertyRef Name="CompanyCode"/>
+                    <PropertyRef Name="FiscalYear"/>
+                    <PropertyRef Name="FiscalPeriod"/>
+                    <PropertyRef Name="ComparisonYear"/>
+                    <PropertyRef Name="ComparisonPeriod"/>
+                    <PropertyRef Name="PlanningCategory"/>
+                    <PropertyRef Name="ProfitCenter"/>
+                    <PropertyRef Name="ProfitCenterHierarchy"/>
+                    <PropertyRef Name="GLAccount"/>
+                    <PropertyRef Name="GLAccountHierarchy"/>
+                    <PropertyRef Name="ProcessingType"/>
+                    <PropertyRef Name="ShowGLAccount"/>
+                </Key>
+                <Property Name="CompanyCode" Type="Edm.String" Nullable="false" MaxLength="4"/>
+                <Property Name="FiscalYear" Type="Edm.String" Nullable="false" MaxLength="4"/>
+                <Property Name="FiscalPeriod" Type="Edm.String" Nullable="false" MaxLength="3"/>
+                <Property Name="ComparisonYear" Type="Edm.String" Nullable="false" MaxLength="4"/>
+                <Property Name="ComparisonPeriod" Type="Edm.String" Nullable="false" MaxLength="3"/>
+                <Property Name="PlanningCategory" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="ProfitCenter" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="ProfitCenterHierarchy" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="GLAccount" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="GLAccountHierarchy" Type="Edm.String" Nullable="false" MaxLength="42"/>
+                <Property Name="ProcessingType" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="ShowGLAccount" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="Text" Type="Edm.String" Nullable="false" MaxLength="50"/>
+                <Property Name="Currency" Type="Edm.String" Nullable="false" MaxLength="5"/>
+                <Property Name="RAmount01" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPercent01" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RAmount02" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPercent02" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RAmount03" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPercent03" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RAmount04" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPercent04" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RAmount05" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPercent05" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RAmount06" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPercent06" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RAmount07" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPercent07" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RAmount08" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPercent08" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RAmount09" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPercent09" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RAmount10" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPercent10" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RAmount11" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPercent11" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RAmount12" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPercent12" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RMTDACT" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPERMTDACT" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RMTDBUD" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPERMTDBUD" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CMTDACT" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPERMTDACT" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="VARMTDBUD" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="PERVARMTDBUD" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="VARMTDCOMP" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="PERVARCOMMTDP" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RYTDACT" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPERYTDACT" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RYTDBUD" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RPERYTDBUD" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CYTDACT" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPERYTDACT" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="VARYTDBUD" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="PERVARYTDBUD" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="VARYTDCOMP" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="PERVARYTDCOMP" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CAmount01" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPercent01" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CAmount02" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPercent02" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CAmount03" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPercent03" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CAmount04" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPercent04" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CAmount05" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPercent05" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CAmount06" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPercent06" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CAmount07" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPercent07" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CAmount08" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPercent08" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CAmount09" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPercent09" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CAmount10" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPercent10" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CAmount11" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPercent11" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="CAmount12" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="CPercent12" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="FY_COMP_ACT" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="FY_COMP_PER" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RBAmount01" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RBPercent01" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RBAmount02" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RBPercent02" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RBAmount03" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RBPercent03" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RBAmount04" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RBPercent04" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RBAmount05" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RBPercent05" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RBAmount06" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RBPercent06" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RBAmount07" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RBPercent07" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RBAmount08" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RBPercent08" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RBAmount09" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RBPercent09" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RBAmount10" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RBPercent10" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RBAmount11" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RBPercent11" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="RBAmount12" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="RBPercent12" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+                <Property Name="FYREPBUD" Type="Edm.Decimal" Nullable="false" Precision="23" Scale="variable"/>
+                <Property Name="FYREPPER" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2"/>
+            </EntityType>
+            <EntityContainer Name="Container">
+                <EntitySet Name="ManagementReportComparision" EntityType="com.sap.gateway.srvd.zco_ui_zcor001.v0001.ManagementReportComparisionType"/>
+            </EntityContainer>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CompanyCode">
+                <Annotation Term="SAP__common.ValueListForValidation" String=""/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/zi_companycode_vh/0001;ps='srvd-zco_ui_zcor001-0001';va='com.sap.gateway.srvd.zco_ui_zcor001.v0001.et-zco_i_zcor001_rpt.companycode'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.FilterDefaultValue" String="1000"/>
+                <Annotation Term="SAP__common.Label" String="Company Code"/>
+                <Annotation Term="SAP__common.Heading" String="CoCd"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=BUKRS"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/FiscalYear">
+                <Annotation Term="SAP__common.Label" String="Fiscal Year"/>
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/zi_fiscalyear_vh/0001;ps='srvd-zco_ui_zcor001-0001';va='com.sap.gateway.srvd.zco_ui_zcor001.v0001.et-zco_i_zcor001_rpt.fiscalyear'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Heading" String="Fiscal Year"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Fiscal Year"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/FiscalPeriod">
+                <Annotation Term="SAP__common.Label" String="Fiscal Period"/>
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/zi_fiscalperiod_vh/0001;ps='srvd-zco_ui_zcor001-0001';va='com.sap.gateway.srvd.zco_ui_zcor001.v0001.et-zco_i_zcor001_rpt.fiscalperiod'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Heading" String="Fiscal Period"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Fiscal Period"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=FINS_FISCALPERIOD"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/ComparisonYear">
+                <Annotation Term="SAP__common.Label" String="Comparison Year"/>
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/zi_comparisonyear_vh/0001;ps='srvd-zco_ui_zcor001-0001';va='com.sap.gateway.srvd.zco_ui_zcor001.v0001.et-zco_i_zcor001_rpt.comparisonyear'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Heading" String="Fiscal Year"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Fiscal Year"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/ComparisonPeriod">
+                <Annotation Term="SAP__common.Label" String="Comparison Period"/>
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/zi_comparisonperiod_vh/0001;ps='srvd-zco_ui_zcor001-0001';va='com.sap.gateway.srvd.zco_ui_zcor001.v0001.et-zco_i_zcor001_rpt.comparisonperiod'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Heading" String="Fiscal Period"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Fiscal Period"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=FINS_FISCALPERIOD"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/PlanningCategory">
+                <Annotation Term="SAP__common.ValueListForValidation" String=""/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/zi_planningcategory_vh/0001;ps='srvd-zco_ui_zcor001-0001';va='com.sap.gateway.srvd.zco_ui_zcor001.v0001.et-zco_i_zcor001_rpt.planningcategory'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="Plan Category"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=FCOM_CATEGORY"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/ProfitCenter">
+                <Annotation Term="SAP__common.ValueListForValidation" String=""/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/zi_profitcenter_vh/0001;ps='srvd-zco_ui_zcor001-0001';va='com.sap.gateway.srvd.zco_ui_zcor001.v0001.et-zco_i_zcor001_rpt.profitcenter'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="Profit Center"/>
+                <Annotation Term="SAP__common.Heading" String="Profit Ctr"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=PRCTR"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/ProfitCenterHierarchy">
+                <Annotation Term="SAP__common.ValueListForValidation" String=""/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/zi_profitcenterhierarchy_vh/0001;ps='srvd-zco_ui_zcor001-0001';va='com.sap.gateway.srvd.zco_ui_zcor001.v0001.et-zco_i_zcor001_rpt.profitcenterhierarchy'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="Profit Center Hierarchy"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/GLAccount">
+                <Annotation Term="SAP__common.ValueListForValidation" String=""/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/i_glaccountstdvh/0001;ps='srvd-zco_ui_zcor001-0001';va='com.sap.gateway.srvd.zco_ui_zcor001.v0001.et-zco_i_zcor001_rpt.glaccount'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="G/L Account"/>
+                <Annotation Term="SAP__common.Heading" String="G/L Acct"/>
+                <Annotation Term="SAP__common.QuickInfo" String="G/L Account Number"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=SAKNR"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/GLAccountHierarchy">
+                <Annotation Term="SAP__common.ValueListForValidation" String=""/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/zi_glaccounthierarchy_vh/0001;ps='srvd-zco_ui_zcor001-0001';va='com.sap.gateway.srvd.zco_ui_zcor001.v0001.et-zco_i_zcor001_rpt.glaccounthierarchy'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="G/L Account Hierarchy"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/ProcessingType">
+                <Annotation Term="SAP__common.ValueListForValidation" String=""/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/zi_proctype_vh/0001;ps='srvd-zco_ui_zcor001-0001';va='com.sap.gateway.srvd.zco_ui_zcor001.v0001.et-zco_i_zcor001_rpt.processingtype'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.FilterDefaultValue" String="O"/>
+                <Annotation Term="SAP__common.Label" String="ProcessingType"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Processing Type"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/ShowGLAccount">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.FilterDefaultValue" String="N"/>
+                <Annotation Term="SAP__common.Label" String="Show G/L Account"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/Currency">
+                <Annotation Term="SAP__common.IsCurrency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RAmount01">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RAmount02">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RAmount03">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RAmount04">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RAmount05">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RAmount06">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RAmount07">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RAmount08">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RAmount09">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RAmount10">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RAmount11">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RAmount12">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RMTDACT">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RMTDBUD">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CMTDACT">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/VARMTDBUD">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/VARMTDCOMP">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RYTDACT">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RYTDBUD">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CYTDACT">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/VARYTDBUD">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/VARYTDCOMP">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CAmount01">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CAmount02">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CAmount03">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CAmount04">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CAmount05">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CAmount06">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CAmount07">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CAmount08">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CAmount09">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CAmount10">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CAmount11">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/CAmount12">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/FY_COMP_ACT">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RBAmount01">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RBAmount02">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RBAmount03">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RBAmount04">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RBAmount05">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RBAmount06">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RBAmount07">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RBAmount08">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RBAmount09">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RBAmount10">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RBAmount11">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/RBAmount12">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType/FYREPBUD">
+                <Annotation Term="SAP__measures.ISOCurrency" Path="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ManagementReportComparisionType">
+                <Annotation Term="SAP__common.Label" String="Management Report"/>
+                <Annotation Term="SAP__UI.HeaderInfo">
+                    <Record>
+                        <PropertyValue Property="TypeName" String="Management Report Comparison"/>
+                        <PropertyValue Property="TypeNamePlural" String="Management Report Comparison"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__UI.LineItem">
+                    <Collection>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Text"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Currency"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="AUG (CCC)"/>
+                            <PropertyValue Property="Value" Path="RAmount01"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPercent01"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="SEP (CCC)"/>
+                            <PropertyValue Property="Value" Path="RAmount02"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPercent02"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="OCT (CCC)"/>
+                            <PropertyValue Property="Value" Path="RAmount03"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPercent03"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="NOV (CCC)"/>
+                            <PropertyValue Property="Value" Path="RAmount04"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPercent04"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="DEC (CCC)"/>
+                            <PropertyValue Property="Value" Path="RAmount05"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPercent05"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="JAN (CCC)"/>
+                            <PropertyValue Property="Value" Path="RAmount06"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPercent06"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="FEB (CCC)"/>
+                            <PropertyValue Property="Value" Path="RAmount07"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPercent07"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="MAR (CCC)"/>
+                            <PropertyValue Property="Value" Path="RAmount08"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPercent08"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="APR (CCC)"/>
+                            <PropertyValue Property="Value" Path="RAmount09"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPercent09"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="MAY (CCC)"/>
+                            <PropertyValue Property="Value" Path="RAmount10"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPercent10"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="JUN (CCC)"/>
+                            <PropertyValue Property="Value" Path="RAmount11"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPercent11"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="JUL (CCC)"/>
+                            <PropertyValue Property="Value" Path="RAmount12"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPercent12"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="Month to date Actual"/>
+                            <PropertyValue Property="Value" Path="RMTDACT"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPERMTDACT"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="Month to date Budget"/>
+                            <PropertyValue Property="Value" Path="RMTDBUD"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPERMTDBUD"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="Month to date Last Year"/>
+                            <PropertyValue Property="Value" Path="CMTDACT"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPERMTDACT"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="Variance budget"/>
+                            <PropertyValue Property="Value" Path="VARMTDBUD"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="PERVARMTDBUD"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="Variance last year"/>
+                            <PropertyValue Property="Value" Path="VARMTDCOMP"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="PERVARCOMMTDP"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="Year to date Actual"/>
+                            <PropertyValue Property="Value" Path="RYTDACT"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPERYTDACT"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="Year to date Budget"/>
+                            <PropertyValue Property="Value" Path="RYTDBUD"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RPERYTDBUD"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="Year to date Last Year"/>
+                            <PropertyValue Property="Value" Path="CYTDACT"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPERYTDACT"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="Variance budget"/>
+                            <PropertyValue Property="Value" Path="VARYTDBUD"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="PERVARYTDBUD"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="Variance last year"/>
+                            <PropertyValue Property="Value" Path="VARYTDCOMP"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="PERVARYTDCOMP"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="AUG YYYY"/>
+                            <PropertyValue Property="Value" Path="CAmount01"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPercent01"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="SEP YYYY"/>
+                            <PropertyValue Property="Value" Path="CAmount02"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPercent02"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="OCT YYYY"/>
+                            <PropertyValue Property="Value" Path="CAmount03"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPercent03"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="NOV YYYY"/>
+                            <PropertyValue Property="Value" Path="CAmount04"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPercent04"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="DEC YYYY"/>
+                            <PropertyValue Property="Value" Path="CAmount05"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPercent05"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="JAN YYYY"/>
+                            <PropertyValue Property="Value" Path="CAmount06"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPercent06"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="FEB YYYY"/>
+                            <PropertyValue Property="Value" Path="CAmount07"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPercent07"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="MAR YYYY"/>
+                            <PropertyValue Property="Value" Path="CAmount08"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPercent08"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="APR YYYY"/>
+                            <PropertyValue Property="Value" Path="CAmount09"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPercent09"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="MAY YYYY"/>
+                            <PropertyValue Property="Value" Path="CAmount10"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPercent10"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="JUN YYYY"/>
+                            <PropertyValue Property="Value" Path="CAmount11"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPercent11"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="JUL YYYY"/>
+                            <PropertyValue Property="Value" Path="CAmount12"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="CPercent12"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="FY comparison year(ACT)"/>
+                            <PropertyValue Property="Value" Path="FY_COMP_ACT"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="FY_COMP_PER"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="AUG YYYY"/>
+                            <PropertyValue Property="Value" Path="RBAmount01"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RBPercent01"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="SEP YYYY"/>
+                            <PropertyValue Property="Value" Path="RBAmount02"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RBPercent02"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="OCT YYYY"/>
+                            <PropertyValue Property="Value" Path="RBAmount03"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RBPercent03"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="NOV YYYY"/>
+                            <PropertyValue Property="Value" Path="RBAmount04"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RBPercent04"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="DEC YYYY"/>
+                            <PropertyValue Property="Value" Path="RBAmount05"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RBPercent05"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="JAN YYYY"/>
+                            <PropertyValue Property="Value" Path="RBAmount06"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RBPercent06"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="FEB YYYY"/>
+                            <PropertyValue Property="Value" Path="RBAmount07"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RBPercent07"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="MAR YYYY"/>
+                            <PropertyValue Property="Value" Path="RBAmount08"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RBPercent08"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="APR YYYY"/>
+                            <PropertyValue Property="Value" Path="RBAmount09"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RBPercent09"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="MAY YYYY"/>
+                            <PropertyValue Property="Value" Path="RBAmount10"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RBPercent10"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="JUN YYYY"/>
+                            <PropertyValue Property="Value" Path="RBAmount11"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RBPercent11"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="JUL YYYY"/>
+                            <PropertyValue Property="Value" Path="RBAmount12"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="RBPercent12"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="FY reporting year(BG)"/>
+                            <PropertyValue Property="Value" Path="FYREPBUD"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Label" String="%"/>
+                            <PropertyValue Property="Value" Path="FYREPPER"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>CompanyCode</PropertyPath>
+                        <PropertyPath>FiscalYear</PropertyPath>
+                        <PropertyPath>FiscalPeriod</PropertyPath>
+                        <PropertyPath>ComparisonYear</PropertyPath>
+                        <PropertyPath>ComparisonPeriod</PropertyPath>
+                        <PropertyPath>PlanningCategory</PropertyPath>
+                        <PropertyPath>ProfitCenter</PropertyPath>
+                        <PropertyPath>ProfitCenterHierarchy</PropertyPath>
+                        <PropertyPath>GLAccount</PropertyPath>
+                        <PropertyPath>GLAccountHierarchy</PropertyPath>
+                        <PropertyPath>ProcessingType</PropertyPath>
+                        <PropertyPath>ShowGLAccount</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.Container/ManagementReportComparision">
+                <Annotation Term="SAP__capabilities.SearchRestrictions">
+                    <Record>
+                        <PropertyValue Property="Searchable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="Filterable" Bool="true"/>
+                        <PropertyValue Property="FilterExpressionRestrictions">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="CompanyCode"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SingleValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="FiscalYear"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SingleValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="FiscalPeriod"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SingleValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="ComparisonYear"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SingleValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="ComparisonPeriod"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SingleValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="ProcessingType"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SingleValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="ShowGLAccount"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SingleValue"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="RequiredProperties">
+                            <Collection>
+                                <PropertyPath>CompanyCode</PropertyPath>
+                                <PropertyPath>FiscalYear</PropertyPath>
+                                <PropertyPath>FiscalPeriod</PropertyPath>
+                                <PropertyPath>ProfitCenterHierarchy</PropertyPath>
+                                <PropertyPath>ProcessingType</PropertyPath>
+                                <PropertyPath>ShowGLAccount</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                        <PropertyValue Property="QueryOptions">
+                            <Record>
+                                <PropertyValue Property="SelectSupported" Bool="true"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.Container">
+                <Annotation Term="SAP__CodeList.CurrencyCodes">
+                    <Record>
+                        <PropertyValue Property="Url" String="../../../../default/iwbep/common/0001/$metadata"/>
+                        <PropertyValue Property="CollectionPath" String="Currencies"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+                <Annotation Term="SAP__capabilities.FilterFunctions">
+                    <Collection>
+                        <String>eq</String>
+                        <String>ne</String>
+                        <String>gt</String>
+                        <String>ge</String>
+                        <String>lt</String>
+                        <String>le</String>
+                        <String>and</String>
+                        <String>or</String>
+                        <String>contains</String>
+                        <String>startswith</String>
+                        <String>endswith</String>
+                        <String>any</String>
+                        <String>all</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__support.TechnicalInfoLinks">
+                    <Record>
+                        <PropertyValue Property="Url" String="../../../../default/iwbep/common/0001/$metadata"/>
+                        <PropertyValue Property="FunctionImport" String="GetTechnicalInfoLinks"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.SupportedFormats">
+                    <Collection>
+                        <String>application/json</String>
+                        <String>application/pdf</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__PDF.Features">
+                    <Record>
+                        <PropertyValue Property="DocumentDescriptionReference" String="../../../../default/iwbep/common/0001/$metadata"/>
+                        <PropertyValue Property="DocumentDescriptionCollection" String="MyDocumentDescriptions"/>
+                        <PropertyValue Property="ArchiveFormat" Bool="true"/>
+                        <PropertyValue Property="Border" Bool="true"/>
+                        <PropertyValue Property="CoverPage" Bool="true"/>
+                        <PropertyValue Property="FitToPage" Bool="true"/>
+                        <PropertyValue Property="FontName" Bool="true"/>
+                        <PropertyValue Property="FontSize" Bool="true"/>
+                        <PropertyValue Property="HeaderFooter" Bool="true"/>
+                        <PropertyValue Property="IANATimezoneFormat" Bool="true"/>
+                        <PropertyValue Property="Margin" Bool="true"/>
+                        <PropertyValue Property="Padding" Bool="true"/>
+                        <PropertyValue Property="ResultSizeDefault" Int="20000"/>
+                        <PropertyValue Property="ResultSizeMaximum" Int="20000"/>
+                        <PropertyValue Property="Signature" Bool="true"/>
+                        <PropertyValue Property="TextDirectionLayout" Bool="true"/>
+                        <PropertyValue Property="Treeview" Bool="true"/>
+                        <PropertyValue Property="UploadToFileShare" Bool="true"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.BatchSupport">
+                    <Record>
+                        <PropertyValue Property="SupportedFormats">
+                            <Collection>
+                                <String>application/json</String>
+                                <String>multipart/mixed</String>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.KeyAsSegmentSupported"/>
+                <Annotation Term="SAP__capabilities.AsynchronousRequestsSupported"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
