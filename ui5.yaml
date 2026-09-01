@@ -17,8 +17,8 @@ server:
           url: https://ui5.sap.com
         backend:
           - path: /sap
-            url: https://my436957-api.s4hana.cloud.sap
-            client: '080'
+            url: https://my436944.s4hana.cloud.sap    #my436957
+            client: '100'                             #080
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:
