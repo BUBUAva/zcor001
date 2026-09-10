@@ -34,6 +34,20 @@
           "localUri": "annotations/annotation.xml"
         }
       }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "intent1": {
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          },
+          "semanticObject": "zcor001",
+          "action": "display",
+          "title": "{{appTitle}}",
+          "subTitle": "{{appDescription}}"
+        }
+      }
     }
   },
   "sap.ui": {
@@ -54,6 +68,15 @@
   },
   "sap.ui5": {
     "flexEnabled": true,
+    "extends": {
+      "extensions": {
+        "sap.ui.controllerExtensions": {
+          "sap.fe.templates.ListReport.ListReportController": {
+            "controllerName": "zcor001.ext.controller.ListReportExt"
+          }
+        }
+      }
+    },
     "dependencies": {
       "minUI5Version": "1.148.8",
       "libs": {
@@ -114,17 +137,19 @@
             "settings": {
               "contextPath": "/ManagementReportComparision",
               "variantManagement": "Page",
-              "navigation": {
-                "ManagementReportComparision": {
-                  "detail": {
-                    "route": "ManagementReportComparisionObjectPage"
-                  }
-                }
-              },
               "controlConfiguration": {
                 "@com.sap.vocabularies.UI.v1.LineItem": {
                   "tableSettings": {
-                    "type": "ResponsiveTable"
+                    "type": "GridTable",
+                    "beforeRebindTable": ".extension.zcor001.ext.controller.ListReportExt.onBeforeRebindTable"
+                  },
+                  "actions": {
+                    "ExportToExcelAction": {
+                      "text": "{i18n>exportToExcelBtn}",
+                      "press": ".extension.zcor001.ext.controller.ListReportExt.onExportToExcel",
+                      "requiresSelection": false,
+                      "enabled": "{localExt>/exportEnabled}"
+                    }
                   }
                 }
               }
@@ -148,5 +173,9 @@
   "sap.fiori": {
     "registrationIds": [],
     "archeType": "transactional"
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "zcor001"
   }
 }
