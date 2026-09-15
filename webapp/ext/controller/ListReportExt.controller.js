@@ -20,7 +20,7 @@ sap.ui.define([
 	var EXPORT_ACTION_BINDING_ENTITY_SET = "ManagementReportComparision";
 
 	// Maps the Filter Bar's property name to the exportToExcel action's own (uppercase, ABAP-style) parameter name.
-	// Modify by Avally-Achawin start: 2026-09-10 15:10 - re-added PlanningCategory/ProfitCenter/ProcessingType
+	// re-added PlanningCategory/ProfitCenter/ProcessingType
 	// for good. Dropping them (2026-09-10 14:35) broke the call with "No value for mandatory parameter
 	// 'PLA...' specified" - PLANNINGCATEGORY (and by the same structure, PROFITCENTER/PROCESSINGTYPE too) is a
 	// mandatory action parameter on the backend, so all 12 fields must always be sent, even empty. The real
@@ -40,9 +40,7 @@ sap.ui.define([
 		ProcessingType: "PROCESSINGTYPE",
 		ShowGLAccount: "SHOWGLACCOUNT"
 	};
-	// Modify by Avally-Achawin end: 2026-09-10 15:10
-	// Modify by Avally-Achawin end: 2026-09-10 14:35
-	// Modify by Avally-Achawin end: 2026-09-10 10:15
+
 
 	// Candidate key names to try, in order, when reading the action's result (guid / file name).
 	var GUID_RESULT_KEYS = ["guid", "Guid", "GUID", "Uuid", "uuid"];
@@ -50,7 +48,7 @@ sap.ui.define([
 
 	// ExportBuffer holds the generated file. ExpFileContent is a genuine OData V4 media-stream property
 	// (not inlined in the entity's JSON), so it is fetched separately via its own URL.
-	var EXPORT_BUFFER_ENTITY_SET = "ExportBuffer";
+	var EXPORT_BUFFER_ENTITY_SET = "ApplicationLog";
 	var EXPORT_BUFFER_CONTENT_PROPERTY = "ExpFileContent";
 	var EXPORT_BUFFER_FILENAME_PROPERTY = "ExpFileName";
 	var EXPORT_BUFFER_MIMETYPE_PROPERTY = "ExpMimeType";
@@ -98,7 +96,7 @@ sap.ui.define([
 
 	// Reads one Filter Bar condition's current value(s) out of the map returned by
 	// StateUtil.retrieveExternalState(oFilterBar).filter.
-	// Modify by Avally-Achawin start: 2026-09-10 17:05 - now joins every selected value with a comma instead
+	// now joins every selected value with a comma instead
 	// of returning only aConditions[0].values[0]. A multi-select Filter Bar field (e.g. PlanningCategory)
 	// produces one condition entry per chosen value; reading just the first one silently dropped every value
 	// after the first when exporting. The backend's exporttoexcel method now SPLITs this same
@@ -115,11 +113,10 @@ sap.ui.define([
 			})
 			.join(",");
 	}
-	// Modify by Avally-Achawin end: 2026-09-10 17:05
+
 
 	// Reads the current Filter Bar conditions (via StateUtil, the documented mdc way to read filter
 	// state programmatically) and turns them into the exportToExcel action's parameter payload.
-	// Modify by Avally-Achawin start: 2026-09-10 16:20 - removed the ShowGLAccount -> toAbapBoolean("X"/"")
 	// special case. SHOWGLACCOUNT's FilterDefaultValue annotation is "N" (not "" / not the ABAP_BOOL "X"
 	// convention assumed earlier), so the Filter Bar's actual on/off values are backend-defined domain values
 	// (e.g. "Y"/"N") - forcing them into "X"/"" was wrong and made ls_param-showglaccount arrive blank even
@@ -138,7 +135,7 @@ sap.ui.define([
 
 		return mParams;
 	}
-	// Modify by Avally-Achawin end: 2026-09-10 16:20
+
 
 	// Downloads the export file: fetches the ExportBuffer entity's plain properties (filename/mimetype) via
 	// the OData model, then separately fetches the ExpFileContent media stream and triggers a browser download.
@@ -247,7 +244,7 @@ sap.ui.define([
 	}
 
 	return ControllerExtension.extend("zcor001.ext.controller.ListReportExt", {
-		// Modify by Avally-Achawin start: 2026-09-15 - create the "localExt" model (exportEnabled
+		// create the "localExt" model (exportEnabled
 		// defaulting to false) as early as onInit instead of lazily inside onBeforeRebindTable. Before the
 		// user ever presses "Go", onBeforeRebindTable has not run yet, so "localExt" did not exist - an
 		// unresolved "{localExt>/exportEnabled}" binding on the Export to Excel button then falls back to
@@ -262,7 +259,6 @@ sap.ui.define([
 				}
 			}
 		},
-		// Modify by Avally-Achawin end: 2026-09-15
 
 		// Wired via manifest.json's tableSettings.beforeRebindTable (the OData V4 extension point for
 		// reacting to a table rebind) - NOT nested under "override", since this is not one of the
@@ -283,7 +279,7 @@ sap.ui.define([
 					oLocalExtModel = new JSONModel({ exportEnabled: false, freezeStatus: "-" });
 					oView.setModel(oLocalExtModel, "localExt");
 				}
-				// Modify by Avally-Achawin start: 2026-09-15 - exportEnabled is no longer forced to true on
+				// exportEnabled is no longer forced to true on
 				// every rebind. Export to Excel should only be pressable when the table actually has rows;
 				// the real row count isn't known yet at onBeforeRebindTable time (the rebind hasn't fetched
 				// data yet), so it's set from the "dataReceived" event of the table's own OData binding.
@@ -301,7 +297,6 @@ sap.ui.define([
 						oLocalExtModel.setProperty("/exportEnabled", iLength > 0);
 					});
 				}
-				// Modify by Avally-Achawin end: 2026-09-15
 
 				this._freezeLeadingColumns(oTable, 1, oLocalExtModel);
 				this._hideCurrencyColumn(oTable);
@@ -316,20 +311,22 @@ sap.ui.define([
 					this._updateRAmountColumnLabels(oTable, sFiscalPeriod);
 					this._updateCalendarYearColumnLabels(oTable, sFiscalYear);
 
-					// Modify by Avally-Achawin start: 2026-09-15 - notify the user when ProcessingType is set
-					// to Background ('B'). Doing this here (frontend) instead of the query provider
+					// notify the user on every Go
+					// press (not just the first) while ProcessingType = 'B' is selected. Previously this only
+					// fired on the transition into 'B' (tracked via /lastProcessingType), per user report that
+					// it should show every time Go is pressed as long as 'B' is selected, so the once-only
+					// tracking was dropped and the check now runs unconditionally against the current
+					// ProcessingType on each rebind. Still done here (frontend) rather than the query provider
 					// (zcl_co_zcor001_rpt) because IF_RAP_QUERY_RESPONSE has no method to attach an
 					// informational message to a successful response (confirmed by an ABAP syntax error when
 					// that was tried) - raising cx_rap_query_provider instead would fail the whole table load
-					// as an error, which is heavier than intended for a simple notice. Only shown on the
-					// transition into 'B' (tracked via /lastProcessingType on the localExt model) so it does
-					// not reappear on every rebind (sort/page/etc.) while 'B' stays selected.
+					// as an error, which is heavier than intended for a simple notice.
 					var sProcessingType = getConditionValue(mConditions, "ProcessingType");
-					if (sProcessingType === "B" && oLocalExtModel.getProperty("/lastProcessingType") !== "B") {
+					if (sProcessingType === "B") {
 						MessageBox.information("Background process has been processing");
 					}
-					oLocalExtModel.setProperty("/lastProcessingType", sProcessingType);
-					// Modify by Avally-Achawin end: 2026-09-15
+					// Modify by Avally-Achawin end: 2026-09-15 12:00
+
 				}.bind(this)).catch(function (oError) {
 					// eslint-disable-next-line no-console
 					console.error("[ListReportExt] retrieveExternalState failed:", oError);
@@ -486,13 +483,13 @@ sap.ui.define([
 					var mParams = buildExportParameters(oFilterState);
 					var oActionBinding = oModel.bindContext("/" + EXPORT_ACTION_BINDING_ENTITY_SET + "/" + EXPORT_ACTION_FQN + "(...)");
 
-					// Modify by Avally-Achawin start: 2026-09-14 - temporary debug log to see exactly what
+					// temporary debug log to see exactly what
 					// gets sent to exportToExcel, since the backend is currently failing with a 500
 					// (ABAP SYNTAX_ERROR dump) and we need to rule out a bad/oversized parameter value as
 					// the trigger before chasing it purely on the backend side. Remove once root-caused.
 					// eslint-disable-next-line no-console
 					console.log("[ListReportExt] exportToExcel request params:", JSON.parse(JSON.stringify(mParams)));
-					// Modify by Avally-Achawin end: 2026-09-14
+
 
 					Object.keys(mParams).forEach(function (sParamName) {
 						oActionBinding.setParameter(sParamName, mParams[sParamName]);
@@ -516,7 +513,7 @@ sap.ui.define([
 					BusyIndicator.hide();
 					// eslint-disable-next-line no-console
 					console.error("[ListReportExt] onExportToExcel failed:", oError);
-					// Modify by Avally-Achawin start: 2026-09-14 - temporary debug log to surface every
+					// temporary debug log to surface every
 					// detail UI5 attaches to the error (message/stack/cause and, for a raw HTTP failure,
 					// the response status/body) - the generic "could not be downloaded" MessageBox hides
 					// all of this from the user, but we need it to see what the backend actually returned
@@ -529,7 +526,6 @@ sap.ui.define([
 					console.error("[ListReportExt] error detail - cause:", oError && oError.cause);
 					// eslint-disable-next-line no-console
 					console.error("[ListReportExt] error detail - status/body:", oError && (oError.status || oError.statusCode), oError && oError.responseText);
-					// Modify by Avally-Achawin end: 2026-09-14
 
 					var sMessage = (oError && oError.message === "ZERO_GUID")
 						? oResourceBundle.getText("exportToExcelFailedMsg")
