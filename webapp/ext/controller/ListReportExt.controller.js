@@ -53,6 +53,17 @@ sap.ui.define([
 	var EXPORT_BUFFER_FILENAME_PROPERTY = "ExpFileName";
 	var EXPORT_BUFFER_MIMETYPE_PROPERTY = "ExpMimeType";
 
+
+	// Reason: constants for the "Application Log" header button's cross-app navigation - kept together here,
+	// same style as the other module-level constants above, instead of inlined in onApplicationLog.
+	// ZCOAPPLOG_APPLICATION_ID must match the "Application" value the backend writes into the ApplicationLog
+	// entity for every export triggered from this app (zcor001), so the navigated-to app's filter actually
+	// matches only this app's own log entries.
+	var ZCOAPPLOG_SEMANTIC_OBJECT = "zcoapplog";
+	var ZCOAPPLOG_ACTION = "display";
+	var ZCOAPPLOG_APPLICATION_ID = "ZCOR001";
+
+
 	// Hardcoded to match manifest.json's sap.app/dataSources/mainService/uri. This cannot be looked up at
 	// runtime via sap.ui.core.Component.getOwnerComponentFor(view) - that returns the embedded
 	// sap.fe.templates.ListReport component, not this app's own Component.js, and its manifest has no
@@ -325,7 +336,7 @@ sap.ui.define([
 					if (sProcessingType === "B") {
 						MessageBox.information("Background process has been processing");
 					}
-					// Modify by Avally-Achawin end: 2026-09-15 12:00
+
 
 				}.bind(this)).catch(function (oError) {
 					// eslint-disable-next-line no-console
@@ -467,6 +478,51 @@ sap.ui.define([
 				oColumn.setHeader(sMonth + " " + iCalendarYear);
 			});
 		},
+
+
+		// Reason: new "Application Log" header button (manifest.json's ApplicationLogAction, positioned before
+		// ExportToExcelAction) must always be pressable, even before "Go" is pressed - unlike Export to Excel it
+		// has no "enabled" binding, so it is never gated by localExt>/exportEnabled or table row count.
+		// Navigates to the separate "Application Log" Fiori app (semantic object "zcoapplog", action "display")
+		// via the standard sap.ushell CrossApplicationNavigation service rather than a hardcoded URL, so the
+		// target app's real URL/routing is resolved by the Fiori Launchpad regardless of environment.
+		//
+		// zcoapplog's ApplicationLog list report exposes Guid/Application/ExpUser as its filter bar's
+		// SelectionFields (confirmed against its own webapp/localService/metadata.xml). Passing Application and
+		// ExpUser as navigation parameters below pre-fills those two filter fields and - per Fiori elements'
+		// documented behavior for navigation-parameter prefill - triggers the initial search automatically, so
+		// the user lands on zcoapplog already showing "their own log entries for this app" without pressing Go.
+		onApplicationLog: function () {
+			var oView = this.base.getView();
+			var oResourceBundle = oView.getModel("i18n").getResourceBundle();
+
+			sap.ushell.Container.getServiceAsync("UserInfo").then(function (oUserInfo) {
+				return oUserInfo.getId();
+			}).catch(function () {
+				// UserInfo lookup failing should not block the navigation itself - fall back to no ExpUser filter.
+				return "";
+			}).then(function (sUserId) {
+				return sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then(function (oCrossAppNavigator) {
+					var mParams = { Application: [ZCOAPPLOG_APPLICATION_ID] };
+					if (sUserId) {
+						mParams.ExpUser = [sUserId];
+					}
+
+					oCrossAppNavigator.toExternal({
+						target: {
+							semanticObject: ZCOAPPLOG_SEMANTIC_OBJECT,
+							action: ZCOAPPLOG_ACTION
+						},
+						params: mParams
+					});
+				});
+			}).catch(function (oError) {
+				// eslint-disable-next-line no-console
+				console.error("[ListReportExt] onApplicationLog failed:", oError);
+				MessageBox.error(oResourceBundle.getText("applicationLogNavFailedMsg"));
+			});
+		},
+
 
 		// Header action bound from manifest.json ("press": ".extension.zcor001.ext.controller.ListReportExt.onExportToExcel").
 		// Reads the current Filter Bar state, calls the exportToExcel action, then downloads the generated file.

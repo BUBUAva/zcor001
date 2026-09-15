@@ -144,6 +144,15 @@
                     "beforeRebindTable": ".extension.zcor001.ext.controller.ListReportExt.onBeforeRebindTable"
                   },
                   "actions": {
+                    "ApplicationLogAction": {
+                      "text": "{i18n>applicationLogBtn}",
+                      "press": ".extension.zcor001.ext.controller.ListReportExt.onApplicationLog",
+                      "requiresSelection": false,
+                      "position": {
+                        "placement": "Before",
+                        "anchor": "ExportToExcelAction"
+                      }
+                    },
                     "ExportToExcelAction": {
                       "text": "{i18n>exportToExcelBtn}",
                       "press": ".extension.zcor001.ext.controller.ListReportExt.onExportToExcel",
