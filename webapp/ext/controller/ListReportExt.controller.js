@@ -42,34 +42,20 @@ sap.ui.define([
 	};
 
 
-	// Candidate key names to try, in order, when reading the action's result (guid / file name).
+	// Candidate key names to try, in order, when reading the action's result (guid / file name / content).
 	var GUID_RESULT_KEYS = ["guid", "Guid", "GUID", "Uuid", "uuid"];
 	var FILE_NAME_RESULT_KEYS = ["file_name", "FileName", "fileName", "FILE_NAME"];
-
-	// ExportBuffer holds the generated file. ExpFileContent is a genuine OData V4 media-stream property
-	// (not inlined in the entity's JSON), so it is fetched separately via its own URL.
-	var EXPORT_BUFFER_ENTITY_SET = "ApplicationLog";
-	var EXPORT_BUFFER_CONTENT_PROPERTY = "ExpFileContent";
-	var EXPORT_BUFFER_FILENAME_PROPERTY = "ExpFileName";
-	var EXPORT_BUFFER_MIMETYPE_PROPERTY = "ExpMimeType";
-
-
-	// Reason: constants for the "Application Log" header button's cross-app navigation - kept together here,
-	// same style as the other module-level constants above, instead of inlined in onApplicationLog.
-	// ZCOAPPLOG_APPLICATION_ID must match the "Application" value the backend writes into the ApplicationLog
-	// entity for every export triggered from this app (zcor001), so the navigated-to app's filter actually
-	// matches only this app's own log entries.
-	var ZCOAPPLOG_SEMANTIC_OBJECT = "zcoapplog";
-	var ZCOAPPLOG_ACTION = "display";
-	var ZCOAPPLOG_APPLICATION_ID = "ZCOR001";
-
-
-	// Hardcoded to match manifest.json's sap.app/dataSources/mainService/uri. This cannot be looked up at
-	// runtime via sap.ui.core.Component.getOwnerComponentFor(view) - that returns the embedded
-	// sap.fe.templates.ListReport component, not this app's own Component.js, and its manifest has no
-	// dataSources entry. This is a server-relative path, so a plain fetch() against it resolves correctly
-	// regardless of which environment (local preview, deployed BSP, ...) the app is served from.
-	var MAIN_SERVICE_URL = "/sap/opu/odata4/sap/zco_zcor001_srv/srvd/sap/zco_ui_zcor001/0001/";
+	// -----Add by Avally-Achawin start (16/09/2026 13:00)-----
+	// exportToExcel's action result now carries the generated file's content directly (base64), added on
+	// the ABAP side specifically so the frontend never has to read it back from the ExportBuffer/
+	// ApplicationLog entity in a second, separate request. That second-request approach (tried earlier
+	// today) was fundamentally unreliable: the CREATE that writes the buffer row only stages it in RAP's
+	// transactional buffer inside exportToExcel's own LUW, and a follow-up call from here has no guarantee
+	// it lands after that buffer is actually committed - plus ApplicationLog turned out to live on a
+	// completely different OData service (zco_ui_zcor001_log) than this action's own (zco_ui_zcor001).
+	// Reading the content straight off THIS action's own response sidesteps both problems entirely.
+	var CONTENT_RESULT_KEYS = ["file_content", "FileContent", "fileContent", "FILE_CONTENT"];
+	// -----Add by Avally-Achawin End (16/09/2026 13:00)-----
 
 	function pickValue(oObject, aCandidateKeys) {
 		if (!oObject) {
@@ -83,20 +69,13 @@ sap.ui.define([
 		return undefined;
 	}
 
-	function normalizeGuid(sGuid) {
-		if (!sGuid) {
-			return "";
-		}
-		var sHex = String(sGuid).replace(/[^0-9a-fA-F]/g, "");
-		if (sHex.length !== 32) {
-			// Not a plain 32-hex string (e.g. already dashed, or not a guid at all) - return as-is.
-			return String(sGuid);
-		}
-		return (
-			sHex.substr(0, 8) + "-" + sHex.substr(8, 4) + "-" + sHex.substr(12, 4) + "-" +
-			sHex.substr(16, 4) + "-" + sHex.substr(20, 12)
-		).toLowerCase();
-	}
+	// -----Delete by Avally-Achawin start (16/09/2026 13:00)-----
+	// function normalizeGuid(sGuid) { ... }
+	// Removed: only ever used to build the ApplicationLog download URL's key predicate. Now that
+	// downloadExportFile() reads the file content straight off exportToExcel's own action result instead
+	// of addressing ApplicationLog by Guid in a second request, nothing needs a normalized (dashed) guid
+	// string any more - isZeroGuid() below works on the raw guid value as-is.
+	// -----Delete by Avally-Achawin End (16/09/2026 13:00)-----
 
 	function isZeroGuid(sGuid) {
 		if (!sGuid) {
@@ -148,39 +127,41 @@ sap.ui.define([
 	}
 
 
-	// Downloads the export file: fetches the ExportBuffer entity's plain properties (filename/mimetype) via
-	// the OData model, then separately fetches the ExpFileContent media stream and triggers a browser download.
-	function downloadExportFile(oModel, sGuid, sFileName) {
-		var sNormalizedGuid = normalizeGuid(sGuid);
+	// -----Modify by Avally-Achawin start (16/09/2026 13:00)-----
+	// Decodes a base64 (or base64url - '-'/'_' instead of '+'/'/', handled the same way) string into a
+	// Blob. atob() only understands standard base64, so '-'/'_' are normalized and padding is restored
+	// first regardless of which variant the backend actually sent.
+	function base64ToBlob(sBase64, sMimeType) {
+		var sNormalized = sBase64.replace(/-/g, "+").replace(/_/g, "/");
+		while (sNormalized.length % 4 !== 0) {
+			sNormalized += "=";
+		}
 
-		var oContextBinding = oModel.bindContext(
-			"/" + EXPORT_BUFFER_ENTITY_SET + "(Guid=" + sNormalizedGuid + ")",
-			undefined,
-			{ $select: [EXPORT_BUFFER_FILENAME_PROPERTY, EXPORT_BUFFER_MIMETYPE_PROPERTY, "SAP__Messages"].join(",") }
-		);
+		var sBinary = atob(sNormalized);
+		var aBytes = new Uint8Array(sBinary.length);
+		for (var i = 0; i < sBinary.length; i++) {
+			aBytes[i] = sBinary.charCodeAt(i);
+		}
 
-		return oContextBinding.getBoundContext().requestObject()
-			.then(function (oData) {
-				var sStreamUrl = MAIN_SERVICE_URL + EXPORT_BUFFER_ENTITY_SET +
-					"(Guid=" + sNormalizedGuid + ")/" + EXPORT_BUFFER_CONTENT_PROPERTY;
-
-				return fetch(sStreamUrl, { credentials: "same-origin" }).then(function (oResponse) {
-					if (!oResponse.ok) {
-						throw new Error("HTTP " + oResponse.status + " fetching " + sStreamUrl);
-					}
-					return oResponse.blob();
-				}).then(function (oBlob) {
-					var sObjectUrl = URL.createObjectURL(oBlob);
-					var oLink = document.createElement("a");
-					oLink.href = sObjectUrl;
-					oLink.download = sFileName || oData[EXPORT_BUFFER_FILENAME_PROPERTY] || "export.xlsx";
-					document.body.appendChild(oLink);
-					oLink.click();
-					document.body.removeChild(oLink);
-					URL.revokeObjectURL(sObjectUrl);
-				});
-			});
+		return new Blob([aBytes], { type: sMimeType || "application/octet-stream" });
 	}
+
+	// Triggers a browser download of the export file. No network call any more - exportToExcel's own
+	// action result now carries the base64 file content directly (see CONTENT_RESULT_KEYS above), so this
+	// only needs to decode it and click a throwaway <a download> link. Synchronous; onExportToExcel calls
+	// it directly rather than chaining another .then().
+	function downloadExportFile(sBase64Content, sFileName) {
+		var oBlob = base64ToBlob(sBase64Content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		var sObjectUrl = URL.createObjectURL(oBlob);
+		var oLink = document.createElement("a");
+		oLink.href = sObjectUrl;
+		oLink.download = sFileName || "export.xlsx";
+		document.body.appendChild(oLink);
+		oLink.click();
+		document.body.removeChild(oLink);
+		URL.revokeObjectURL(sObjectUrl);
+	}
+	// -----Modify by Avally-Achawin End (16/09/2026 13:00)-----
 
 	// this.base.getExtensionAPI().getFilterBar() does not exist on sap.fe.templates.ListReport.ExtensionAPI
 	// (verified against SAP's official @sapui5/types) - the FilterBar is resolved directly instead, via the
@@ -336,7 +317,7 @@ sap.ui.define([
 					if (sProcessingType === "B") {
 						MessageBox.information("Background process has been processing");
 					}
-
+					// Modify by Avally-Achawin end: 2026-09-15 12:00
 
 				}.bind(this)).catch(function (oError) {
 					// eslint-disable-next-line no-console
@@ -479,51 +460,6 @@ sap.ui.define([
 			});
 		},
 
-
-		// Reason: new "Application Log" header button (manifest.json's ApplicationLogAction, positioned before
-		// ExportToExcelAction) must always be pressable, even before "Go" is pressed - unlike Export to Excel it
-		// has no "enabled" binding, so it is never gated by localExt>/exportEnabled or table row count.
-		// Navigates to the separate "Application Log" Fiori app (semantic object "zcoapplog", action "display")
-		// via the standard sap.ushell CrossApplicationNavigation service rather than a hardcoded URL, so the
-		// target app's real URL/routing is resolved by the Fiori Launchpad regardless of environment.
-		//
-		// zcoapplog's ApplicationLog list report exposes Guid/Application/ExpUser as its filter bar's
-		// SelectionFields (confirmed against its own webapp/localService/metadata.xml). Passing Application and
-		// ExpUser as navigation parameters below pre-fills those two filter fields and - per Fiori elements'
-		// documented behavior for navigation-parameter prefill - triggers the initial search automatically, so
-		// the user lands on zcoapplog already showing "their own log entries for this app" without pressing Go.
-		onApplicationLog: function () {
-			var oView = this.base.getView();
-			var oResourceBundle = oView.getModel("i18n").getResourceBundle();
-
-			sap.ushell.Container.getServiceAsync("UserInfo").then(function (oUserInfo) {
-				return oUserInfo.getId();
-			}).catch(function () {
-				// UserInfo lookup failing should not block the navigation itself - fall back to no ExpUser filter.
-				return "";
-			}).then(function (sUserId) {
-				return sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then(function (oCrossAppNavigator) {
-					var mParams = { Application: [ZCOAPPLOG_APPLICATION_ID] };
-					if (sUserId) {
-						mParams.ExpUser = [sUserId];
-					}
-
-					oCrossAppNavigator.toExternal({
-						target: {
-							semanticObject: ZCOAPPLOG_SEMANTIC_OBJECT,
-							action: ZCOAPPLOG_ACTION
-						},
-						params: mParams
-					});
-				});
-			}).catch(function (oError) {
-				// eslint-disable-next-line no-console
-				console.error("[ListReportExt] onApplicationLog failed:", oError);
-				MessageBox.error(oResourceBundle.getText("applicationLogNavFailedMsg"));
-			});
-		},
-
-
 		// Header action bound from manifest.json ("press": ".extension.zcor001.ext.controller.ListReportExt.onExportToExcel").
 		// Reads the current Filter Bar state, calls the exportToExcel action, then downloads the generated file.
 		onExportToExcel: function () {
@@ -557,12 +493,22 @@ sap.ui.define([
 				}).then(function (oResult) {
 					var sGuid = pickValue(oResult, GUID_RESULT_KEYS);
 					var sFileName = pickValue(oResult, FILE_NAME_RESULT_KEYS);
+					var sContent = pickValue(oResult, CONTENT_RESULT_KEYS);
 
 					if (isZeroGuid(sGuid)) {
 						throw new Error("ZERO_GUID");
 					}
 
-					return downloadExportFile(oModel, sGuid, sFileName);
+					// -----Modify by Avally-Achawin start (16/09/2026 13:00)-----
+					// file_content is only populated for the synchronous "Online" processing type -
+					// run_export() (ABAP) is skipped entirely for "Background", so there is nothing to
+					// download yet in that case; the user retrieves it later from the separate Application
+					// Log app once the background job finishes. Downloading is therefore conditional on
+					// content actually being present, not just on a non-zero guid.
+					if (sContent) {
+						downloadExportFile(sContent, sFileName);
+					}
+					// -----Modify by Avally-Achawin End (16/09/2026 13:00)-----
 				}).then(function () {
 					BusyIndicator.hide();
 				}).catch(function (oError) {
