@@ -45,7 +45,8 @@
           "semanticObject": "zcor001",
           "action": "display",
           "title": "{{appTitle}}",
-          "subTitle": "{{appDescription}}"
+          "subTitle": "{{appDescription}}",
+          "icon": "sap-icon://manager-insight"
         }
       }
     }
@@ -53,7 +54,7 @@
   "sap.ui": {
     "technology": "UI5",
     "icons": {
-      "icon": "",
+      "icon": "sap-icon://manager-insight",
       "favIcon": "",
       "phone": "",
       "phone@2": "",
@@ -112,7 +113,11 @@
       }
     },
     "resources": {
-      "css": []
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
     },
     "routing": {
       "config": {},
@@ -143,7 +148,26 @@
                     "type": "GridTable",
                     "beforeRebindTable": ".extension.zcor001.ext.controller.ListReportExt.onBeforeRebindTable"
                   },
+                  "columns": {
+                    "NodeStyleHelperColumn": {
+                      "key": "NodeStyleHelperColumn",
+                      "header": " ",
+                      "template": "zcor001.ext.fragment.NodeStyleHelperColumn",
+                      "availability": "Default",
+                      "width": "1px",
+                      "properties": ["NodeStyle", "HeaderText"]
+                    }
+                  },
                   "actions": {
+                    "ApplicationLogAction": {
+                      "text": "{i18n>applicationLogBtn}",
+                      "press": ".extension.zcor001.ext.controller.ListReportExt.onApplicationLog",
+                      "requiresSelection": false,
+                      "position": {
+                        "placement": "Before",
+                        "anchor": "ExportToExcelAction"
+                      }
+                    },
                     "ExportToExcelAction": {
                       "text": "{i18n>exportToExcelBtn}",
                       "press": ".extension.zcor001.ext.controller.ListReportExt.onExportToExcel",

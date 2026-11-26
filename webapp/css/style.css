@@ -1,0 +1,21 @@
+/* -----Add by Avally-Achawin start (22/09/2026 10:52)----- */
+/* Applied by ListReportExt.controller.js to whole table rows whose NodeStyle field is "BOLD"
+   (e.g. hierarchy total/subtotal lines in the Management Report). The "*" selector is required
+   because each cell's text is rendered by its own control (sap.m.Text, etc.) which does not
+   inherit a bold font-weight from the row by default. */
+.zcor001NodeStyleBold,
+.zcor001NodeStyleBold * {
+	font-weight: bold;
+}
+/* -----Add by Avally-Achawin End (22/09/2026 10:52)----- */
+
+/* -----Add by Avally-Achawin start (22/09/2026 11:40)----- */
+/* Shrinks the technical "NodeStyleHelperColumn" (manifest.json LineItem columns) down to nothing -
+   its only job is pulling NodeStyle into the table's own $select, it has no content for the user. */
+.zcor001HiddenColumn {
+	width: 0;
+	padding: 0 !important;
+	margin: 0 !important;
+	overflow: hidden;
+}
+/* -----Add by Avally-Achawin End (22/09/2026 11:40)----- */
