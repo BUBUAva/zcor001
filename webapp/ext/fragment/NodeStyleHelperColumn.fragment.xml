@@ -1,0 +1,10 @@
+<!-- ===Add by Avally-Achawin start (22/09/2026 11:40)=== -->
+<!-- Technical, near-invisible column. Its only purpose is to make NodeStyle part of the table's own
+     $select (via the "properties" array on its manifest.json column entry) - the backend's custom RAP
+     query provider only supports reading NodeStyle as part of this list query, not as a later
+     per-row single-entity GET (Context#requestProperty fails against it). See
+     ListReportExt.controller.js#_applyNodeStyleBoldRows for how the value is then used to bold rows. -->
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
+	<Text text="{NodeStyle}" class="zcor001HiddenColumn" width="1px"/>
+</core:FragmentDefinition>
+<!-- ===Add by Avally-Achawin End (22/09/2026 11:40)=== -->
