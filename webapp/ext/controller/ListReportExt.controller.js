@@ -11,21 +11,26 @@ sap.ui.define([
 ], function (ControllerExtension, StateUtil, MessageBox, BusyIndicator, JSONModel, TablePersonalizationUtils) {
 	"use strict";
 
-	var FISCAL_MONTHS = ["Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"];
-	var FISCAL_MONTHS_FULL = ["August", "September", "October", "November", "December", "January", "February", "March", "April", "May", "June", "July"];
+	var FISCAL_MONTHS = ["AUG", "SEP", "OCT", "NOV", "DEC", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL"];
+
+
+	// The backend flags hierarchy total/subtotal rows (e.g. GLAccountHierarchy roll-up lines) by
+	// setting NodeStyle to "BOLD" on that row. NODE_STYLE_BOLD_CSS_CLASS is defined in css/style.css
+	// (registered via manifest.json sap.ui5/resources/css) and makes the whole row's text bold.
+	var NODE_STYLE_BOLD_VALUE = "BOLD";
+	var NODE_STYLE_BOLD_CSS_CLASS = "zcor001NodeStyleBold";
+
 
 	// exportToExcel is a bound action on the ManagementReportComparision entity set (not an unbound action
 	// at the service root), invoked as "/<EntitySet>/<namespace>.<action>(...)".
 	var EXPORT_ACTION_FQN = "com.sap.gateway.srvd.zco_ui_zcor001.v0001.exportToExcel";
 	var EXPORT_ACTION_BINDING_ENTITY_SET = "ManagementReportComparision";
 
-	// Maps the Filter Bar's property name to the exportToExcel action's own (uppercase, ABAP-style) parameter name.
-	// re-added PlanningCategory/ProfitCenter/ProcessingType
-	// for good. Dropping them (2026-09-10 14:35) broke the call with "No value for mandatory parameter
-	// 'PLA...' specified" - PLANNINGCATEGORY (and by the same structure, PROFITCENTER/PROCESSINGTYPE too) is a
-	// mandatory action parameter on the backend, so all 12 fields must always be sent, even empty. The real
-	// bug was only ever SHOWGLACCOUNT needing a string "X"/"" instead of a JSON boolean (fixed in
-	// toAbapBoolean() above) - it was never about which/how many of these 12 fields were included.
+	// Maps the Filter Bar's property name to the exportToExcel action's own (uppercase, ABAP-style)
+	// parameter name. All 12 fields are always sent, even when empty, because several of them are
+	// mandatory action parameters on the backend. ShowGLAccount is passed through as the Filter Bar's raw
+	// value unmodified - its on/off values are backend-defined domain values (e.g. "Y"/"N"), not the
+	// ABAP_BOOL "X"/"" convention.
 	var EXPORT_PARAM_MAP = {
 		CompanyCode: "COMPANYCODE",
 		FiscalYear: "FISCALYEAR",
@@ -42,34 +47,20 @@ sap.ui.define([
 	};
 
 
-	// Candidate key names to try, in order, when reading the action's result (guid / file name).
+	// Candidate key names to try, in order, when reading the action's result (guid / file name / content).
 	var GUID_RESULT_KEYS = ["guid", "Guid", "GUID", "Uuid", "uuid"];
 	var FILE_NAME_RESULT_KEYS = ["file_name", "FileName", "fileName", "FILE_NAME"];
+	// exportToExcel's action result carries the generated file's content directly (base64) for the
+	// "Online" processing type, so the frontend never needs a separate request to fetch it.
+	var CONTENT_RESULT_KEYS = ["file_content", "FileContent", "fileContent", "FILE_CONTENT"];
 
-	// ExportBuffer holds the generated file. ExpFileContent is a genuine OData V4 media-stream property
-	// (not inlined in the entity's JSON), so it is fetched separately via its own URL.
-	var EXPORT_BUFFER_ENTITY_SET = "ApplicationLog";
-	var EXPORT_BUFFER_CONTENT_PROPERTY = "ExpFileContent";
-	var EXPORT_BUFFER_FILENAME_PROPERTY = "ExpFileName";
-	var EXPORT_BUFFER_MIMETYPE_PROPERTY = "ExpMimeType";
-
-
-	// Reason: constants for the "Application Log" header button's cross-app navigation - kept together here,
-	// same style as the other module-level constants above, instead of inlined in onApplicationLog.
-	// ZCOAPPLOG_APPLICATION_ID must match the "Application" value the backend writes into the ApplicationLog
-	// entity for every export triggered from this app (zcor001), so the navigated-to app's filter actually
-	// matches only this app's own log entries.
+	// Constants for the "Application Log" header button's cross-app navigation.
+	// ZCOAPPLOG_APPLICATION_ID must match the "Application" value the backend writes into the
+	// ApplicationLog entity for every export triggered from this app (zcor001), so the navigated-to app's
+	// filter actually matches only this app's own log entries.
 	var ZCOAPPLOG_SEMANTIC_OBJECT = "zcoapplog";
 	var ZCOAPPLOG_ACTION = "display";
 	var ZCOAPPLOG_APPLICATION_ID = "ZCOR001";
-
-
-	// Hardcoded to match manifest.json's sap.app/dataSources/mainService/uri. This cannot be looked up at
-	// runtime via sap.ui.core.Component.getOwnerComponentFor(view) - that returns the embedded
-	// sap.fe.templates.ListReport component, not this app's own Component.js, and its manifest has no
-	// dataSources entry. This is a server-relative path, so a plain fetch() against it resolves correctly
-	// regardless of which environment (local preview, deployed BSP, ...) the app is served from.
-	var MAIN_SERVICE_URL = "/sap/opu/odata4/sap/zco_zcor001_srv/srvd/sap/zco_ui_zcor001/0001/";
 
 	function pickValue(oObject, aCandidateKeys) {
 		if (!oObject) {
@@ -83,21 +74,7 @@ sap.ui.define([
 		return undefined;
 	}
 
-	function normalizeGuid(sGuid) {
-		if (!sGuid) {
-			return "";
-		}
-		var sHex = String(sGuid).replace(/[^0-9a-fA-F]/g, "");
-		if (sHex.length !== 32) {
-			// Not a plain 32-hex string (e.g. already dashed, or not a guid at all) - return as-is.
-			return String(sGuid);
-		}
-		return (
-			sHex.substr(0, 8) + "-" + sHex.substr(8, 4) + "-" + sHex.substr(12, 4) + "-" +
-			sHex.substr(16, 4) + "-" + sHex.substr(20, 12)
-		).toLowerCase();
-	}
-
+	// Detects the backend's "no result" sentinel value - an all-zero GUID.
 	function isZeroGuid(sGuid) {
 		if (!sGuid) {
 			return true;
@@ -106,12 +83,9 @@ sap.ui.define([
 	}
 
 	// Reads one Filter Bar condition's current value(s) out of the map returned by
-	// StateUtil.retrieveExternalState(oFilterBar).filter.
-	// now joins every selected value with a comma instead
-	// of returning only aConditions[0].values[0]. A multi-select Filter Bar field (e.g. PlanningCategory)
-	// produces one condition entry per chosen value; reading just the first one silently dropped every value
-	// after the first when exporting. The backend's exporttoexcel method now SPLITs this same
-	// comma-separated string back into individual range entries (one per value), so this must match that.
+	// StateUtil.retrieveExternalState(oFilterBar).filter. A multi-select field (e.g. PlanningCategory) can
+	// produce more than one condition entry; all of them are joined with a comma, matching how the
+	// backend's exporttoexcel method splits this same comma-separated string back into range entries.
 	function getConditionValue(mConditions, sProperty) {
 		var aConditions = mConditions[sProperty] || [];
 
@@ -126,14 +100,8 @@ sap.ui.define([
 	}
 
 
-	// Reads the current Filter Bar conditions (via StateUtil, the documented mdc way to read filter
-	// state programmatically) and turns them into the exportToExcel action's parameter payload.
-	// special case. SHOWGLACCOUNT's FilterDefaultValue annotation is "N" (not "" / not the ABAP_BOOL "X"
-	// convention assumed earlier), so the Filter Bar's actual on/off values are backend-defined domain values
-	// (e.g. "Y"/"N") - forcing them into "X"/"" was wrong and made ls_param-showglaccount arrive blank even
-	// when the user selected "show", so the exported Excel never included the GL Account column. Every other
-	// filter field is already passed through as the raw Filter Bar value unmodified; ShowGLAccount now follows
-	// the same pattern and trusts whatever value its own value help/dropdown actually provides.
+	// Reads the current Filter Bar conditions (via StateUtil, the documented mdc way to read filter state
+	// programmatically) and turns them into the exportToExcel action's parameter payload.
 	function buildExportParameters(oFilterState) {
 		var mConditions = (oFilterState && oFilterState.filter) || {};
 		var mParams = {};
@@ -148,38 +116,35 @@ sap.ui.define([
 	}
 
 
-	// Downloads the export file: fetches the ExportBuffer entity's plain properties (filename/mimetype) via
-	// the OData model, then separately fetches the ExpFileContent media stream and triggers a browser download.
-	function downloadExportFile(oModel, sGuid, sFileName) {
-		var sNormalizedGuid = normalizeGuid(sGuid);
+	// Decodes a base64 (or base64url - '-'/'_' instead of '+'/'/') string into a Blob. atob() only
+	// understands standard base64, so '-'/'_' are normalized and padding is restored first.
+	function base64ToBlob(sBase64, sMimeType) {
+		var sNormalized = sBase64.replace(/-/g, "+").replace(/_/g, "/");
+		while (sNormalized.length % 4 !== 0) {
+			sNormalized += "=";
+		}
 
-		var oContextBinding = oModel.bindContext(
-			"/" + EXPORT_BUFFER_ENTITY_SET + "(Guid=" + sNormalizedGuid + ")",
-			undefined,
-			{ $select: [EXPORT_BUFFER_FILENAME_PROPERTY, EXPORT_BUFFER_MIMETYPE_PROPERTY, "SAP__Messages"].join(",") }
-		);
+		var sBinary = atob(sNormalized);
+		var aBytes = new Uint8Array(sBinary.length);
+		for (var i = 0; i < sBinary.length; i++) {
+			aBytes[i] = sBinary.charCodeAt(i);
+		}
 
-		return oContextBinding.getBoundContext().requestObject()
-			.then(function (oData) {
-				var sStreamUrl = MAIN_SERVICE_URL + EXPORT_BUFFER_ENTITY_SET +
-					"(Guid=" + sNormalizedGuid + ")/" + EXPORT_BUFFER_CONTENT_PROPERTY;
+		return new Blob([aBytes], { type: sMimeType || "application/octet-stream" });
+	}
 
-				return fetch(sStreamUrl, { credentials: "same-origin" }).then(function (oResponse) {
-					if (!oResponse.ok) {
-						throw new Error("HTTP " + oResponse.status + " fetching " + sStreamUrl);
-					}
-					return oResponse.blob();
-				}).then(function (oBlob) {
-					var sObjectUrl = URL.createObjectURL(oBlob);
-					var oLink = document.createElement("a");
-					oLink.href = sObjectUrl;
-					oLink.download = sFileName || oData[EXPORT_BUFFER_FILENAME_PROPERTY] || "export.xlsx";
-					document.body.appendChild(oLink);
-					oLink.click();
-					document.body.removeChild(oLink);
-					URL.revokeObjectURL(sObjectUrl);
-				});
-			});
+	// Triggers a browser download of the export file: decodes its base64 content into a Blob and clicks a
+	// throwaway <a download> link.
+	function downloadExportFile(sBase64Content, sFileName) {
+		var oBlob = base64ToBlob(sBase64Content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		var sObjectUrl = URL.createObjectURL(oBlob);
+		var oLink = document.createElement("a");
+		oLink.href = sObjectUrl;
+		oLink.download = sFileName || "export.xlsx";
+		document.body.appendChild(oLink);
+		oLink.click();
+		document.body.removeChild(oLink);
+		URL.revokeObjectURL(sObjectUrl);
 	}
 
 	// this.base.getExtensionAPI().getFilterBar() does not exist on sap.fe.templates.ListReport.ExtensionAPI
@@ -240,28 +205,23 @@ sap.ui.define([
 	}
 
 	// Builds the report title text, used for both the page title and the table's own header.
-	function buildTitleText(sFiscalPeriod, sFiscalYear) {
-		var iPeriod = parseInt(sFiscalPeriod, 10);
-
-		if (isNaN(iPeriod) || iPeriod < 1 || iPeriod > 12 || !sFiscalYear) {
+	// Changed from a client-computed "Month Year" (derived from the FiscalPeriod/FiscalYear filter
+	// values) to appending the backend-supplied HeaderText field instead - HeaderText comes from the
+	// first row of the table's own data (see _getFirstRowHeaderText / the "dataReceived" handler in
+	// onBeforeRebindTable), since the user wants the title driven by that field rather than recomputed
+	// on the frontend from filter values.
+	function buildTitleText(sHeaderText) {
+		if (!sHeaderText) {
 			return null;
 		}
 
-		var sMonth = FISCAL_MONTHS_FULL[iPeriod - 1];
-		// Periods 6-12 (Jan-Jul) roll into the next calendar year - same rule as the CAmount/RBAmount column labels.
-		var iBaseYear = parseInt(sFiscalYear, 10);
-		var iCalendarYear = isNaN(iBaseYear) ? sFiscalYear : (iPeriod <= 5 ? iBaseYear : iBaseYear + 1);
-		return "Management Report for the Academic Year " + sMonth + " " + iCalendarYear + " (THB) Consolidation";
+		return "Management Report for the Academic Year " + sHeaderText;
 	}
 
 	return ControllerExtension.extend("zcor001.ext.controller.ListReportExt", {
-		// create the "localExt" model (exportEnabled
-		// defaulting to false) as early as onInit instead of lazily inside onBeforeRebindTable. Before the
-		// user ever presses "Go", onBeforeRebindTable has not run yet, so "localExt" did not exist - an
-		// unresolved "{localExt>/exportEnabled}" binding on the Export to Excel button then falls back to
-		// enabled, letting it be pressed with no data loaded at all (reported: button was clickable before
-		// the first Go). Creating the model here so that binding always resolves to false until the table
-		// actually reports rows.
+		// Creates the "localExt" model (exportEnabled defaulting to false) as early as onInit instead of
+		// lazily inside onBeforeRebindTable, so that a "{localExt>/exportEnabled}" binding on the Export to
+		// Excel button always resolves to false (rather than falling back to enabled) before the first "Go".
 		override: {
 			onInit: function () {
 				var oView = this.base.getView();
@@ -274,8 +234,9 @@ sap.ui.define([
 		// Wired via manifest.json's tableSettings.beforeRebindTable (the OData V4 extension point for
 		// reacting to a table rebind) - NOT nested under "override", since this is not one of the
 		// documented ListReportController overrides (onAfterClear/onPendingFilters/onViewNeedsRefresh).
-		// Runs on every "Go": freezes the "Text" column, hides the "Currency" column, refreshes the page
-		// title/table header/column labels, and enables the Export to Excel button.
+		// Runs on every "Go": freezes the leading column, hides the "Currency" column, refreshes the page
+		// title/table header/column labels, enables the Export to Excel button once rows are loaded, and
+		// shows a notice when background processing is selected.
 		onBeforeRebindTable: function (oEvent) {
 			try {
 				var oTable = findMdcTable(this.base.getView(), oEvent.getSource());
@@ -290,15 +251,10 @@ sap.ui.define([
 					oLocalExtModel = new JSONModel({ exportEnabled: false, freezeStatus: "-" });
 					oView.setModel(oLocalExtModel, "localExt");
 				}
-				// exportEnabled is no longer forced to true on
-				// every rebind. Export to Excel should only be pressable when the table actually has rows;
-				// the real row count isn't known yet at onBeforeRebindTable time (the rebind hasn't fetched
-				// data yet), so it's set from the "dataReceived" event of the table's own OData binding.
-				// Confirmed via debug logging that this hook's actual event parameter is
-				// "collectionBindingInfo" (not "bindingParams" as first assumed), an object exposing its own
-				// attachEvent()/getAttachedEvents() API - using that (rather than poking at its internal
-				// "collectionBindingInfo.events" object directly) keeps this additive alongside whatever
-				// dataReceived handling Fiori elements itself already wires up (busy state, no-data text).
+				// Export to Excel should only be pressable once the table actually has rows. The real row
+				// count isn't known yet at onBeforeRebindTable time (the rebind hasn't fetched data yet), so
+				// exportEnabled is set from the "dataReceived" event of the table's own row-collection
+				// binding (exposed here as "collectionBindingInfo").
 				var oCollectionBindingInfo = oEvent.getParameter && oEvent.getParameter("collectionBindingInfo");
 				if (oCollectionBindingInfo && oCollectionBindingInfo.attachEvent) {
 					oCollectionBindingInfo.attachEvent("dataReceived", function (oDataEvent) {
@@ -306,37 +262,46 @@ sap.ui.define([
 						var bHasError = !!oDataEvent.getParameter("error");
 						var iLength = (!bHasError && oBinding && oBinding.getLength) ? oBinding.getLength() : 0;
 						oLocalExtModel.setProperty("/exportEnabled", iLength > 0);
-					});
+
+						// The report title's "Academic Year ..." suffix now comes from the HeaderText field
+						// on the first loaded row (per user request), not from the filter bar - so it can only
+						// be read here, once data has actually arrived, not earlier in onBeforeRebindTable.
+						var sHeaderText = (!bHasError) ? this._getFirstRowHeaderText(oBinding) : undefined;
+						this._updatePageTitle(sHeaderText);
+						this._updateTableHeader(oTable, sHeaderText);
+
+					}.bind(this));
 				}
 
 				this._freezeLeadingColumns(oTable, 1, oLocalExtModel);
 				this._hideCurrencyColumn(oTable);
+				// Bolds whole rows whose NodeStyle field is "BOLD" (hierarchy total/subtotal lines) -
+				// see _applyNodeStyleBoldRows for why this needs the inner GridTable instance.
+				this._applyNodeStyleBoldRows(oTable);
+
 
 				StateUtil.retrieveExternalState(oFilterBar).then(function (oFilterState) {
 					var mConditions = (oFilterState && oFilterState.filter) || {};
 					var sFiscalPeriod = getConditionValue(mConditions, "FiscalPeriod");
 					var sFiscalYear = getConditionValue(mConditions, "FiscalYear");
+					var sComparisonYear = getConditionValue(mConditions, "ComparisonYear");
 
-					this._updatePageTitle(sFiscalPeriod, sFiscalYear);
-					this._updateTableHeader(oTable, sFiscalPeriod, sFiscalYear);
 					this._updateRAmountColumnLabels(oTable, sFiscalPeriod);
-					this._updateCalendarYearColumnLabels(oTable, sFiscalYear);
 
-					// notify the user on every Go
-					// press (not just the first) while ProcessingType = 'B' is selected. Previously this only
-					// fired on the transition into 'B' (tracked via /lastProcessingType), per user report that
-					// it should show every time Go is pressed as long as 'B' is selected, so the once-only
-					// tracking was dropped and the check now runs unconditionally against the current
-					// ProcessingType on each rebind. Still done here (frontend) rather than the query provider
-					// (zcl_co_zcor001_rpt) because IF_RAP_QUERY_RESPONSE has no method to attach an
-					// informational message to a successful response (confirmed by an ABAP syntax error when
-					// that was tried) - raising cx_rap_query_provider instead would fail the whole table load
-					// as an error, which is heavier than intended for a simple notice.
+					// CAmount01-12 column headers show the comparison year, not the fiscal year: they fall
+					// back to FiscalYear - 1 only when the Comparison Year filter is left empty.
+					this._updateComparisonYearColumnLabels(oTable, sComparisonYear, sFiscalYear);
+					this._updateBudgetYearColumnLabels(oTable, sFiscalYear);
+
+
+					// Shows an informational notice every time "Go" is pressed while ProcessingType = "B"
+					// (background processing) is selected. Done here on the frontend rather than in the
+					// query provider (zcl_co_zcor001_rpt) because IF_RAP_QUERY_RESPONSE has no method to
+					// attach an informational message to an otherwise-successful response.
 					var sProcessingType = getConditionValue(mConditions, "ProcessingType");
 					if (sProcessingType === "B") {
 						MessageBox.information("Background process has been processing");
 					}
-
 
 				}.bind(this)).catch(function (oError) {
 					// eslint-disable-next-line no-console
@@ -348,8 +313,10 @@ sap.ui.define([
 			}
 		},
 
-		_updatePageTitle: function (sFiscalPeriod, sFiscalYear) {
-			var sTitleText = buildTitleText(sFiscalPeriod, sFiscalYear);
+		// Now takes sHeaderText (the first row's HeaderText field) instead of sFiscalPeriod/sFiscalYear -
+		// see buildTitleText and the "dataReceived" handler in onBeforeRebindTable for why.
+		_updatePageTitle: function (sHeaderText) {
+			var sTitleText = buildTitleText(sHeaderText);
 
 			if (!sTitleText) {
 				return;
@@ -374,9 +341,11 @@ sap.ui.define([
 		},
 
 		// Sets the mdc.Table's own header text (the text shown directly above the table, distinct from the
-		// page-level DynamicPageTitle) and disables the automatic "(N)" row-count suffix.
-		_updateTableHeader: function (oTable, sFiscalPeriod, sFiscalYear) {
-			var sTitleText = buildTitleText(sFiscalPeriod, sFiscalYear);
+		// page-level DynamicPageTitle) and disables the automatic "(N)" row-count suffix. Now takes
+		// sHeaderText (the first row's HeaderText field) instead of sFiscalPeriod/sFiscalYear - see
+		// buildTitleText and the "dataReceived" handler in onBeforeRebindTable for why.
+		_updateTableHeader: function (oTable, sHeaderText) {
+			var sTitleText = buildTitleText(sHeaderText);
 
 			if (!sTitleText || !oTable || !oTable.setHeader) {
 				return;
@@ -387,6 +356,22 @@ sap.ui.define([
 			if (oTable.setShowRowCount) {
 				oTable.setShowRowCount(false);
 			}
+		},
+
+		// Reads the HeaderText field off the first row of the table's row-collection binding. HeaderText
+		// is not one of the LineItem's own visible columns, so it must be pulled into the table's own
+		// $select the same way NodeStyle is (see manifest.json's NodeStyleHelperColumn "properties" list) -
+		// otherwise getProperty("HeaderText") below would always return undefined, same class of issue
+		// _applyNodeStyleBoldRows already documents for NodeStyle.
+		_getFirstRowHeaderText: function (oBinding) {
+			if (!oBinding || typeof oBinding.getContexts !== "function") {
+				return undefined;
+			}
+
+			var aContexts = oBinding.getContexts(0, 1);
+			var oFirstContext = aContexts && aContexts[0];
+
+			return oFirstContext ? oFirstContext.getProperty("HeaderText") : undefined;
 		},
 
 		// oTable.getType().setFixedColumnCount(iCount) sets the property but has no visual effect on a
@@ -432,6 +417,93 @@ sap.ui.define([
 			});
 		},
 
+
+		// sap.ui.mdc.Table (type "GridTable") has no public/documented way to style a row from its own
+		// data - the only documented per-row hook is the "rowSettings" aggregation's semantic
+		// "highlight" color bar, not font weight. So this reaches into the inner sap.ui.table.Table
+		// instance the mdc.Table wraps (its private "_oTable"), the same class of internal-API reach
+		// _freezeLeadingColumns above already does via sap/ui/mdc/table/utils/Personalization. If a
+		// future SAPUI5 upgrade renames/removes "_oTable", every step here is feature-detected and
+		// wrapped in try/catch so bold styling is simply skipped rather than breaking the table.
+		//
+		// The listener is attached once per inner table instance (not once per "Go", since
+		// onBeforeRebindTable re-runs on every "Go" but the inner table instance is reused) and reapplies
+		// the CSS class on every "rowsUpdated" - the event sap.ui.table.Table fires whenever its
+		// virtualized row set is re-rendered (initial load, scroll, sort, filter), since rows get reused
+		// for different data and a previously-applied class would otherwise end up on the wrong row.
+
+		// Previously used oRow.getDomRefs() and toggled the class on whatever jQuery-wrapped parts it
+		// returned - that is guesswork about sap.ui.table.Row's private DOM structure, and evidently
+		// never matched (no bold ever appeared). oRow.getCells() is the public, documented API that
+		// returns the actual cell Controls for the row (in "rows" aggregation order), and every UI5
+		// Control supports addStyleClass()/removeStyleClass() - both fully public, so this no longer
+			// depends on any private structure at all.
+		_setRowBoldClass: function (oRow, bBold) {
+			var aCells = (typeof oRow.getCells === "function") ? oRow.getCells() : [];
+
+			aCells.forEach(function (oCellControl) {
+				if (!oCellControl || typeof oCellControl.addStyleClass !== "function") {
+					return;
+				}
+				if (bBold) {
+					oCellControl.addStyleClass(NODE_STYLE_BOLD_CSS_CLASS);
+				} else {
+					oCellControl.removeStyleClass(NODE_STYLE_BOLD_CSS_CLASS);
+				}
+			});
+		},
+
+
+		_applyNodeStyleBoldRows: function (oTable) {
+			try {
+				var oInnerTable = oTable && oTable._oTable;
+
+				if (!oInnerTable || typeof oInnerTable.attachEvent !== "function" || typeof oInnerTable.getRows !== "function") {
+					// eslint-disable-next-line no-console
+					console.warn("[ListReportExt] _applyNodeStyleBoldRows: inner GridTable (_oTable) not found - bold styling skipped.");
+					return;
+				}
+
+				if (oInnerTable._zcor001NodeStyleBoldAttached) {
+					return;
+				}
+				oInnerTable._zcor001NodeStyleBoldAttached = true;
+
+				var that = this;
+				oInnerTable.attachEvent("rowsUpdated", function () {
+					oInnerTable.getRows().forEach(function (oRow) {
+						var oContext = oRow.getBindingContext();
+
+						if (!oContext) {
+							return;
+						}
+
+	
+						// NodeStyle is not one of the LineItem's own visible columns, so plain
+						// oContext.getProperty("NodeStyle") always returned undefined - the reason the
+						// first version of this method never actually bolded anything. Context#
+						// requestProperty() (OData V4's "late property" API, tried next) does not work
+						// either: this entity's backend is a custom RAP query provider that only
+						// implements "Read List", not "Read by Key", so the per-row single-entity GET it
+						// issues is rejected outright. The only path left is making NodeStyle part of the
+						// SAME list query as everything else - done via the technical, near-invisible
+						// "NodeStyleHelperColumn" added in manifest.json (controlConfiguration ->
+						// @com.sap.vocabularies.UI.v1.LineItem -> columns), whose "properties": ["NodeStyle"]
+						// pulls it into the table's own $select. With that in place NodeStyle is already
+						// loaded on every row's context by the time rowsUpdated fires, so a plain,
+						// synchronous getProperty() is enough again.
+						var bBold = oContext.getProperty("NodeStyle") === NODE_STYLE_BOLD_VALUE;
+						that._setRowBoldClass(oRow, bBold);
+
+					});
+				});
+			} catch (oError) {
+				// eslint-disable-next-line no-console
+				console.error("[ListReportExt] _applyNodeStyleBoldRows failed:", oError);
+			}
+		},
+
+
 		_updateRAmountColumnLabels: function (oTable, sFiscalPeriod) {
 			var iSelectedPeriod = parseInt(sFiscalPeriod, 10);
 			var oColumns = (oTable && oTable.getColumns) ? oTable.getColumns() : [];
@@ -454,24 +526,54 @@ sap.ui.define([
 			});
 		},
 
-		_updateCalendarYearColumnLabels: function (oTable, sFiscalYear) {
+
+		// CAmount01-12 columns show the comparison side of the report, so their "MONTH YYYY" header must
+		// track the Comparison Year filter, not the Fiscal Year filter. When Comparison Year is left empty,
+		// FiscalYear - 1 is used instead so the header still shows a sensible (prior fiscal year) label.
+		_updateComparisonYearColumnLabels: function (oTable, sComparisonYear, sFiscalYear) {
+			var iBaseYear = parseInt(sComparisonYear, 10);
+
+			if (isNaN(iBaseYear)) {
+				var iFiscalYear = parseInt(sFiscalYear, 10);
+
+				if (isNaN(iFiscalYear)) {
+					return;
+				}
+
+				iBaseYear = iFiscalYear - 1;
+			}
+
+			this._setCalendarYearColumnLabels(oTable, /^CAmount(\d{2})$/, iBaseYear);
+		},
+
+
+
+		// RBAmount01-12 columns keep following the Fiscal Year filter as before - only the CAmount01-12
+		// columns above were changed to follow Comparison Year.
+		_updateBudgetYearColumnLabels: function (oTable, sFiscalYear) {
 			var iBaseYear = parseInt(sFiscalYear, 10);
 
 			if (isNaN(iBaseYear)) {
 				return;
 			}
 
+			this._setCalendarYearColumnLabels(oTable, /^RBAmount(\d{2})$/, iBaseYear);
+		},
+
+		// Shared header-setting logic: iBaseYear is the calendar year that fiscal period 1 (August) falls
+		// in - periods 6-12 (Jan-Jul) roll into iBaseYear + 1.
+		_setCalendarYearColumnLabels: function (oTable, rPropertyKeyPattern, iBaseYear) {
 			var oColumns = (oTable && oTable.getColumns) ? oTable.getColumns() : [];
 
 			oColumns.forEach(function (oColumn) {
 				var sPropertyKey = oColumn.getPropertyKey ? oColumn.getPropertyKey() : oColumn.getProperty("propertyKey");
-				var oMatch = sPropertyKey && /^(CAmount|RBAmount)(\d{2})$/.exec(sPropertyKey);
+				var oMatch = sPropertyKey && rPropertyKeyPattern.exec(sPropertyKey);
 
 				if (!oMatch || !oColumn.setHeader) {
 					return;
 				}
 
-				var iColumnPeriod = parseInt(oMatch[2], 10);
+				var iColumnPeriod = parseInt(oMatch[1], 10);
 				var sMonth = FISCAL_MONTHS[iColumnPeriod - 1].toUpperCase();
 				var iCalendarYear = iColumnPeriod <= 5 ? iBaseYear : iBaseYear + 1;
 
@@ -480,24 +582,32 @@ sap.ui.define([
 		},
 
 
-		// Reason: new "Application Log" header button (manifest.json's ApplicationLogAction, positioned before
-		// ExportToExcelAction) must always be pressable, even before "Go" is pressed - unlike Export to Excel it
+		// Header action bound from manifest.json's ApplicationLogAction (positioned before
+		// ExportToExcelAction). Always pressable, even before "Go" is pressed - unlike Export to Excel it
 		// has no "enabled" binding, so it is never gated by localExt>/exportEnabled or table row count.
-		// Navigates to the separate "Application Log" Fiori app (semantic object "zcoapplog", action "display")
-		// via the standard sap.ushell CrossApplicationNavigation service rather than a hardcoded URL, so the
-		// target app's real URL/routing is resolved by the Fiori Launchpad regardless of environment.
+		// Navigates to the separate "Application Log" Fiori app (semantic object "zcoapplog", action
+		// "display") via the standard sap.ushell CrossApplicationNavigation service rather than a
+		// hardcoded URL, so the target app's real URL/routing is resolved by the Fiori Launchpad
+		// regardless of environment.
 		//
 		// zcoapplog's ApplicationLog list report exposes Guid/Application/ExpUser as its filter bar's
-		// SelectionFields (confirmed against its own webapp/localService/metadata.xml). Passing Application and
-		// ExpUser as navigation parameters below pre-fills those two filter fields and - per Fiori elements'
-		// documented behavior for navigation-parameter prefill - triggers the initial search automatically, so
-		// the user lands on zcoapplog already showing "their own log entries for this app" without pressing Go.
+		// SelectionFields. Passing Application and ExpUser as navigation parameters below pre-fills those
+		// two filter fields and - per Fiori elements' documented behavior for navigation-parameter prefill -
+		// triggers the initial search automatically, so the user lands on zcoapplog already showing "their
+		// own log entries for this app" without pressing Go.
 		onApplicationLog: function () {
 			var oView = this.base.getView();
 			var oResourceBundle = oView.getModel("i18n").getResourceBundle();
 
-			sap.ushell.Container.getServiceAsync("UserInfo").then(function (oUserInfo) {
+			// Chain now starts with _clearAllFiltersForAppLogNav() (test fix): pressing "Back" from the
+			// Application Log app restored the old filters and re-ran "Go" automatically, which made the
+			// backend create the background file again and showed the popup again. Clearing all filters
+			// BEFORE navigating means the saved app state holds empty filters, so nothing re-runs on "Back".
+			this._clearAllFiltersForAppLogNav().then(function () {
+				return sap.ushell.Container.getServiceAsync("UserInfo");
+			}).then(function (oUserInfo) {
 				return oUserInfo.getId();
+
 			}).catch(function () {
 				// UserInfo lookup failing should not block the navigation itself - fall back to no ExpUser filter.
 				return "";
@@ -523,9 +633,47 @@ sap.ui.define([
 			});
 		},
 
+		// Clears every Filter Bar condition, then waits for Fiori elements to store the new (empty) app
+		// state, before onApplicationLog navigates away.
+		// - Clearing uses StateUtil.applyExternalState with "filtered: false" on each existing condition -
+		//   the documented mdc way to remove conditions (same Engine facade _hideCurrencyColumn uses).
+		// - updateAppState() is awaited explicitly because Fiori elements otherwise saves app state
+		//   asynchronously after a filter change; navigating before that finishes would still save the
+		//   OLD filters and "Back" would re-run them anyway.
+		// Never rejects: if clearing fails the navigation still goes ahead (only the re-run isn't prevented).
+		_clearAllFiltersForAppLogNav: function () {
+			var oView = this.base.getView();
+			var oFilterBar = findFilterBar(oView, findMdcTable(oView));
+			var oExtensionAPI = this.base.getExtensionAPI();
+
+			if (!oFilterBar) {
+				return Promise.resolve();
+			}
+
+			return StateUtil.retrieveExternalState(oFilterBar).then(function (oFilterState) {
+				var mConditions = (oFilterState && oFilterState.filter) || {};
+				var mRemoveConditions = {};
+
+				Object.keys(mConditions).forEach(function (sProperty) {
+					mRemoveConditions[sProperty] = (mConditions[sProperty] || []).map(function (oCondition) {
+						return Object.assign({}, oCondition, { filtered: false });
+					});
+				});
+
+				return StateUtil.applyExternalState(oFilterBar, { filter: mRemoveConditions });
+			}).then(function () {
+				return (oExtensionAPI && typeof oExtensionAPI.updateAppState === "function")
+					? oExtensionAPI.updateAppState()
+					: undefined;
+			}).catch(function (oError) {
+				// eslint-disable-next-line no-console
+				console.error("[ListReportExt] _clearAllFiltersForAppLogNav failed:", oError);
+			});
+		},
 
 		// Header action bound from manifest.json ("press": ".extension.zcor001.ext.controller.ListReportExt.onExportToExcel").
-		// Reads the current Filter Bar state, calls the exportToExcel action, then downloads the generated file.
+		// Reads the current Filter Bar state, calls the exportToExcel action, then - for the synchronous
+		// "Online" processing type only - decodes the file content the action returns and downloads it.
 		onExportToExcel: function () {
 			try {
 				var oView = this.base.getView();
@@ -539,14 +687,6 @@ sap.ui.define([
 					var mParams = buildExportParameters(oFilterState);
 					var oActionBinding = oModel.bindContext("/" + EXPORT_ACTION_BINDING_ENTITY_SET + "/" + EXPORT_ACTION_FQN + "(...)");
 
-					// temporary debug log to see exactly what
-					// gets sent to exportToExcel, since the backend is currently failing with a 500
-					// (ABAP SYNTAX_ERROR dump) and we need to rule out a bad/oversized parameter value as
-					// the trigger before chasing it purely on the backend side. Remove once root-caused.
-					// eslint-disable-next-line no-console
-					console.log("[ListReportExt] exportToExcel request params:", JSON.parse(JSON.stringify(mParams)));
-
-
 					Object.keys(mParams).forEach(function (sParamName) {
 						oActionBinding.setParameter(sParamName, mParams[sParamName]);
 					});
@@ -557,31 +697,25 @@ sap.ui.define([
 				}).then(function (oResult) {
 					var sGuid = pickValue(oResult, GUID_RESULT_KEYS);
 					var sFileName = pickValue(oResult, FILE_NAME_RESULT_KEYS);
+					var sContent = pickValue(oResult, CONTENT_RESULT_KEYS);
 
 					if (isZeroGuid(sGuid)) {
 						throw new Error("ZERO_GUID");
 					}
 
-					return downloadExportFile(oModel, sGuid, sFileName);
+					// file_content is only populated for the synchronous "Online" processing type - the
+					// backend skips generating it for "Background", where the user instead retrieves the
+					// finished file later from the separate Application Log app. Downloading is therefore
+					// conditional on content actually being present, not just on a non-zero guid.
+					if (sContent) {
+						downloadExportFile(sContent, sFileName);
+					}
 				}).then(function () {
 					BusyIndicator.hide();
 				}).catch(function (oError) {
 					BusyIndicator.hide();
 					// eslint-disable-next-line no-console
 					console.error("[ListReportExt] onExportToExcel failed:", oError);
-					// temporary debug log to surface every
-					// detail UI5 attaches to the error (message/stack/cause and, for a raw HTTP failure,
-					// the response status/body) - the generic "could not be downloaded" MessageBox hides
-					// all of this from the user, but we need it to see what the backend actually returned
-					// for the 500/SYNTAX_ERROR. Remove once root-caused.
-					// eslint-disable-next-line no-console
-					console.error("[ListReportExt] error detail - message:", oError && oError.message);
-					// eslint-disable-next-line no-console
-					console.error("[ListReportExt] error detail - stack:", oError && oError.stack);
-					// eslint-disable-next-line no-console
-					console.error("[ListReportExt] error detail - cause:", oError && oError.cause);
-					// eslint-disable-next-line no-console
-					console.error("[ListReportExt] error detail - status/body:", oError && (oError.status || oError.statusCode), oError && oError.responseText);
 
 					var sMessage = (oError && oError.message === "ZERO_GUID")
 						? oResourceBundle.getText("exportToExcelFailedMsg")

@@ -20,6 +20,6 @@ builder:
         app:
           name: ZCOR001
           package: ZCO_REPORT
-          transport: FYRK900081
+          transport: FYRK900345
         exclude:
           - /test/
